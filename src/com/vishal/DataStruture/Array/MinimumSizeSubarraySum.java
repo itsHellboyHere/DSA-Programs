@@ -18,7 +18,7 @@ public class MinimumSizeSubarraySum {
                 min_length=Math.min(min_length,e-s+1);
                 sum-=nums[s++];
             }
-            e++;
+            e++;  
         }
         return min_length !=Integer.MAX_VALUE ? min_length:0;
     }
