@@ -1,5 +1,7 @@
 package com.vishal.DataStruture.BinaryTree;
 
+import java.util.List;
+
 public class BinarySearchTree {
 
     private static class Node{
@@ -104,6 +106,14 @@ public class BinarySearchTree {
         System.out.print(" "+node.value);
         inorder(node.right);
     }
+
+
+//    public List<Integer> verticalOrder(){
+//        verticalOrderTraversal(root);
+//    }
+//    private List<Integer> verticalOrderTraversal(Node node){
+//
+//    }
     public void postorder(){
         postorder(root);
     }
@@ -115,4 +125,6 @@ public class BinarySearchTree {
         postorder(node.right);
         System.out.print(" "+node.value);
     }
+
+
 }
