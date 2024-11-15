@@ -517,10 +517,272 @@ public class BinaryTree {
         }
         return -1;
     }
+
+    public int finddifofsumAtlevel(){
+        return finddifofsumAtlevel(root);
+    }
+    private int finddifofsumAtlevel(Node node){
+        if(node==null){
+            return 0;
+        }
+        Queue<Node> queue= new LinkedList<>();
+        queue.add(node);
+        int level=1;
+        int esum=0;
+        int osum=0;
+        while (!queue.isEmpty()){
+           int size= queue.size();
+           for(int i=1;i<=size;i++){
+               Node curr = queue.poll();
+               if(level%2==0){
+                   esum+=curr.value;
+               }
+               else{
+                   osum+=curr.value;
+               }
+               if(curr.left!=null){
+                   queue.add(curr.left);
+               }
+               if(curr.right!=null){
+                   queue.add(curr.right);
+               }
+           }
+           level++;
+        }
+        return osum-esum;
+    }
+    public void printsumDiffoflevel(){
+        int ans=finddifofsumAtlevel();
+        System.out.println("diff of sum is => "+ans);
+    }
+
+    public int count(Node node){
+        if(node==null){
+            return 0;
+        }
+        int left=count(node.left);
+        int right=count(node.right);
+        return left+right +1;
+    }
+    public void printCount(){
+        int ans = count(root);
+        System.out.println("Count => "+ans);
+    }
+
+    public void largestBst(){
+       int ans= largestBst(root);
+    }
+    private boolean checkBST(Node node,int min,int max){
+        if(node==null){
+            return true;
+        }
+        if(node.value<= min || node.value>=max){
+               return false;
+        }
+        return checkBST(node.left,min,node.value) && checkBST(node.right, node.value, max);
+
+    }
+    private int largestBst(Node node){
+        if(node== null ){
+            return 0;
+        }
+        if(checkBST(node,Integer.MIN_VALUE,Integer.MAX_VALUE)){
+            return count(node);
+        }
+        return Math.max(largestBst(node.left),largestBst(node.right));
+
+    }
+    public void printLargestBST(){
+//        int ans = largestBst(root);
+
+    }
+
+    public int largestbst(){
+        return largestBSTHelper(root).size;
+    }
+    public NodeInfo largestBSTHelper(Node node){
+        if(node==null){
+            return new NodeInfo(true,0,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        }
+
+        NodeInfo left=largestBSTHelper(node.left);
+        NodeInfo right=largestBSTHelper(node.right);
+
+        if(left.isBST && right.isBST && node.value > left.max && node.value < right.min){
+            int size= left.size+right.size+1;
+            int min= Math.min(node.value, left.min);
+            int max= Math.max(node.value,right.max);
+            return new NodeInfo(true,size,min,max);
+        }
+        return new NodeInfo(false,Math.max(left.size,right.size),0,0);
+    }
+
+    public int findMax(Node node){
+        if(node==null){
+            return 0;
+        }
+        int left=findMax(node.left);
+        int right=findMax(node.right);
+        return Math.max(node.value,Math.max(left,right));
+    }
+
+    public void printMax(){
+        int lmax=findMax(root.left);
+        int rmax=findMax(root.right);
+        System.out.println("LMax "+lmax+" Rmax " +rmax);
+    }
+
+    public void extremeNodes(){
+        extremeNodes(root);
+    }
+    private void extremeNodes(Node node){
+        if(node==null){
+            return;
+        }
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(node);
+        boolean flag=false;
+        while(!queue.isEmpty()){
+            int levelSize= queue.size();
+            for(int i=0;i<levelSize;i++){
+                Node curr=queue.peek();
+
+                if(curr.left!=null){
+                    queue.add(curr.left);
+                }
+                if(curr.right!=null){
+                    queue.add(curr.right);
+                }
+                queue.poll();
+
+                if(flag && i==0){
+                    System.out.println("Left most=> "+curr.value);
+                }
+                if(!flag && i==levelSize-1){
+                    System.out.println("Right most => "+curr.value);
+                }
+            }
+            flag=!flag;
+        }
+
+    }
+    public List<Integer> disTanceK(Node node, Node target,int k){
+
+        if(node==null){
+            return new ArrayList<>();
+        }
+        List<Integer> ans= new ArrayList<>();
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(node);
+        int level=1;
+        while (!queue.isEmpty()){
+            int levelSize=queue.size();
+            for(int i=0;i<levelSize;i++){
+                Node curr= queue.poll();
+                if(curr.value!=target.value && level==k){
+                    ans.add(curr.value);
+                }
+                if(level==k){
+                    ans.add(curr.value);
+                }
+                if(curr.left!=null){
+                    queue.add(curr.left);
+                }
+                if(curr.right!=null){
+                    queue.add(curr.right);
+                }
+            }
+            level++;
+        }
+    return ans;
+    }
+
+    public void printDistanceNodes(){
+        Node target= new Node(8);
+        int k=3;
+        List<Integer>ans=disTanceK(root,target,k);
+        System.out.println("Nodes =>"+ans);
+    }
+
+    private int findDistanceBetweenNodes(Node root, Node node, HashMap<Node, Integer> dismap, int distance) {
+        if (root == null) {
+            return -1;
+        }
+        if (root == node) {
+            dismap.put(root, distance);
+            return 0; // Distance to itself
+        }
+
+        // Check left subtree
+        int left = findDistanceBetweenNodes(root.left, node, dismap, distance + 1);
+        if (left != -1) {
+            dismap.put(root, distance); // Store distance of parent node
+            return left + 1; // Return distance to parent
+        }
+
+        // Check right subtree
+        int right = findDistanceBetweenNodes(root.right, node, dismap, distance + 1);
+        if (right != -1) {
+            dismap.put(root, distance); // Store distance of parent node
+            return right + 1; // Return distance to parent
+        }
+
+        return -1; // Node not found
+    }
+
+    public List<Integer> nodesAtDistanceK(Node root, Node target, int k) {
+        HashMap<Node, Integer> map = new HashMap<>();
+        findDistanceBetweenNodes(root, target, map, 0);
+
+        List<Integer> ans = new ArrayList<>();
+        for (Node node : map.keySet()) {
+            if (map.get(node) == k) {
+                ans.add(node.value);
+            }
+        }
+
+        return ans;
+    }
+
+    public boolean topTobottomString(Node node,Node target,StringBuilder s){
+            if(node==null){
+                return false;
+            }
+            if(node==target){
+                return true;
+            }
+            boolean left=topTobottomString(node.left,target,s);
+            boolean right=topTobottomString(node.right,target,s);
+            if(left){
+                s.append("L");
+                return true;
+            }
+            if(right){
+                s.append("R");
+                return true;
+            }
+
+            return false;
+    }
 }
     class MinMax {
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
+    }
+
+
+    class NodeInfo{
+        int min;
+        int max;
+        boolean isBST;
+        int size;
+
+        public NodeInfo( boolean isBST, int size,int min, int max) {
+            this.min = min;
+            this.max = max;
+            this.isBST = isBST;
+            this.size = size;
+        }
     }
 
     class Run {
@@ -555,22 +817,55 @@ public class BinaryTree {
 //            System.out.println("It is not the pre-order of BST");
 //        }
             int[] lca = {1, 2, 3, 4, 5, 6, 7};
-            tree.root = new Node(1);
-            tree.root.left = new Node(2);
-            tree.root.right = new Node(3);
-            tree.root.left.left = new Node(4);
-            tree.root.left.right = new Node(5);
-            tree.root.right.left = new Node(6);
-            tree.root.right.right = new Node(7);
+//            tree.root = new Node(20);
+//            tree.root.left = new Node(8);
+//            tree.root.right = new Node(22);
+//            tree.root.left.left = new Node(4);
+//            tree.root.left.right = new Node(12);
+////            tree.root.right.left=new Node(6);
+//            tree.root.right.right = new Node(26);
+////            tree.root.left.left.left=new Node(8);
+////            tree.root.left.left.right=new Node(9);
+//            tree.root.left.right.left=new Node(10);
+//            tree.root.left.right.right=new Node(14);
+//            tree.root.left.right.right.right=new Node(15);
+//            tree.root.right.right.right=new Node(15);
 //            tree.findLca();
 //            tree.display();
 //            tree.printLca();
 //            tree.findLCAOfTree();
-            int ans=tree.findDistance(tree.root,tree.root.left.left,tree.root.right.left);
-//            tree.printDistance();
-            System.out.println("Distance between 4 and 7 is: " + ans);
-//h
+//            int ans=tree.findDistance(tree.root,tree.root.left.left,tree.root.right.left);
+////            tree.printDistance();
+//            System.out.println("Distance between 4 and 7 is: " + ans);
+//            tree.printsumDiffoflevel();
+//h         tr
+//            tree.printMax();
+//            tree.printCount();
+//            tree.extremeNodes();
+//            tree.display();
+//            tree.printDistanceNodes();
 
+            tree.root = new Node(5);
+            tree.root.left = new Node(1);
+            tree.root.right = new Node(2);
+            tree.root.left.left = new Node(3);
+            tree.root.right.left=new Node(6);
+            tree.root.right.right=new Node(4);
+
+//            tree.root.left.right = new Node(12);
+//            tree.root.left.right.left = new Node(10);
+//            tree.root.left.right.right = new Node(14);
+
+            // Reference the existing target node
+            Node target = tree.root.right.left; // This is the existing node with value 8
+            StringBuilder s=new StringBuilder();
+            tree.topTobottomString(tree.root,target,s);
+            System.out.println(s);
+//            System.out.println(tree.s);
+//            int k = 2;
+//
+//            List<Integer> ans = tree.nodesAtDistanceK(tree.root, target, k);
+//            System.out.println("Nodes at distance " + k + " from target: " + ans);
 //
         }
 
